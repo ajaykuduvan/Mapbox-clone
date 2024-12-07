@@ -4,24 +4,92 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Maps Clone</title>   
+    <title>Google Maps Clone</title>
 
+    <!-- Include Mapbox GL JS and CSS -->
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css' rel='stylesheet' />
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
-<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+
     <style>
-        body{
+        body {
             margin: 0;
         }
-        #map{
+        #map {
             width: 100vw;
             height: 100vh;
         }
+        #minimize-directions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1;
+            background: white;
+            padding: 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+        }
     </style>
-    <script src="script.js" defer></script>
 </head>
 <body>
-    <div id='map' ></div>
+    <div id='map'></div>
+    <div id="minimize-directions">Minimize Directions</div>
+    <script>
+        // Correctly set your Mapbox access token here
+        mapboxgl.accessToken = 'pk.eyJ1IjoiYWpheWt1bWFyY3NlIiwiYSI6ImNtNGUwOWc4aTBxOGIya3M4cHVyZjAxbG8ifQ.SyCeLLUbbztPlOavusvsew';
+
+        navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+            enableHighAccuracy: true
+        });
+
+        function successLocation(position) {
+            setUpMap([position.coords.longitude, position.coords.latitude]);
+        }
+
+        function errorLocation() {
+            setUpMap([-2.28, 41.45]);  // Default location coordinates
+        }
+
+        function setUpMap(center) {
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center: center,
+                zoom: 15
+            });
+
+            map.addControl(new mapboxgl.NavigationControl());
+
+            var directions = new MapboxDirections({
+                accessToken: mapboxgl.accessToken,
+                unit: 'metric',
+                profile: 'mapbox/driving'
+            });
+            map.addControl(directions, 'top-left');
+
+            // Add a button to minimize the directions panel
+            var minimizeButton = document.getElementById('minimize-directions');
+            minimizeButton.addEventListener('click', function() {
+                var directionsContainer = document.querySelector('.mapboxgl-ctrl-directions');
+                directionsContainer.style.display = 'none';
+                minimizeButton.style.display = 'none';
+            });
+
+            // Automatically show the minimize button when a route is set
+            directions.on('route', function() {
+                minimizeButton.style.display = 'block';
+            });
+
+            // Ensure the directions panel is always visible for input
+            directions.on('clear', function() {
+                var directionsContainer = document.querySelector('.mapboxgl-ctrl-directions');
+                directionsContainer.style.display = 'block';
+                minimizeButton.style.display = 'none';
+            });
+        }
+    </script>
 </body>
 </html>

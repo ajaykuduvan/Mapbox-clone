@@ -20,7 +20,7 @@
             width: 100vw;
             height: 100vh;
         }
-        #minimize-directions {
+        #toggle-directions {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -30,13 +30,12 @@
             cursor: pointer;
             border: 1px solid #ccc;
             border-radius: 4px;
-            display: none;
         }
     </style>
 </head>
 <body>
     <div id='map'></div>
-    <div id="minimize-directions">Minimize Directions</div>
+    <div id="toggle-directions">Minimize Directions</div>
     <script>
         // Correctly set your Mapbox access token here
         mapboxgl.accessToken = 'pk.eyJ1IjoiYWpheWt1bWFyY3NlIiwiYSI6ImNtNGUwOWc4aTBxOGIya3M4cHVyZjAxbG8ifQ.SyCeLLUbbztPlOavusvsew';
@@ -70,24 +69,33 @@
             });
             map.addControl(directions, 'top-left');
 
-            // Add a button to minimize the directions panel
-            var minimizeButton = document.getElementById('minimize-directions');
-            minimizeButton.addEventListener('click', function() {
+            // Add a button to toggle the directions panel
+            var toggleButton = document.getElementById('toggle-directions');
+            toggleButton.addEventListener('click', function() {
                 var directionsContainer = document.querySelector('.mapboxgl-ctrl-directions');
-                directionsContainer.style.display = 'none';
-                minimizeButton.style.display = 'none';
+                if (directionsContainer.style.display === 'none') {
+                    directionsContainer.style.display = 'block';
+                    toggleButton.innerText = 'Minimize Directions';
+                } else {
+                    directionsContainer.style.display = 'none';
+                    toggleButton.innerText = 'Show Directions';
+                }
             });
 
             // Automatically show the minimize button when a route is set
             directions.on('route', function() {
-                minimizeButton.style.display = 'block';
+                var directionsContainer = document.querySelector('.mapboxgl-ctrl-directions');
+                directionsContainer.style.display = 'block';
+                toggleButton.innerText = 'Minimize Directions';
+                toggleButton.style.display = 'block';
             });
 
             // Ensure the directions panel is always visible for input
             directions.on('clear', function() {
                 var directionsContainer = document.querySelector('.mapboxgl-ctrl-directions');
                 directionsContainer.style.display = 'block';
-                minimizeButton.style.display = 'none';
+                toggleButton.innerText = 'Minimize Directions';
+                toggleButton.style.display = 'none';
             });
         }
     </script>

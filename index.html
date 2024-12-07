@@ -21,8 +21,8 @@
             height: 100vh;
         }
         #toggle-directions {
-            position: absolute;
-            top: 10px;
+            position: fixed;
+            bottom: 10px;
             right: 10px;
             z-index: 1;
             background: white;
@@ -30,18 +30,18 @@
             cursor: pointer;
             border: 1px solid #ccc;
             border-radius: 4px;
+            font-size: 14px;
         }
         @media (max-width: 600px) {
             #toggle-directions {
-                top: auto;
-                bottom: 10px;
-                right: 10px;
                 width: auto;
                 padding: 5px;
                 font-size: 12px;
             }
             .mapboxgl-ctrl-directions {
-                width: 90vw !important;
+                width: 100vw !important;
+                height: 50vh;
+                overflow-y: auto;
             }
         }
     </style>
